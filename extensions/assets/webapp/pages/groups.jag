@@ -1,0 +1,85 @@
+<%
+
+var storeServer = require('store').server;
+var carbon = require('carbon');
+var user=storeServer.current(session);
+var um;
+if(user) {
+	um = storeServer.userManager(user.tenantId);
+}else{
+	um = storeServer.userManager(-1234);
+}
+
+require('/modules/store.js').exec(function (ctx) {
+	var options, assets, paging, current, total, url, mainPage, subPage, title, selectedCategory, key,
+			log = ctx.log,
+			sso = ctx.sso,
+			query = ctx.params.query,
+			tag = encodeURIComponent(ctx.params.tag),
+			store = ctx.store,
+			user = ctx.user,
+			server = ctx.server,
+			tenantId = ctx.tenantId,
+			configs = ctx.configs,
+			site = ctx.site,
+			search = require('/modules/search.js'),
+			subscriptions = {},
+			subscription = false,
+			avaliablePages,isSubscribed,
+			social = carbon.server.osgiService('org.wso2.carbon.social.core.service.SocialActivityService');
+
+	if(tag == 'undefined' ){tag = null;}
+
+	caramel = require('caramel');
+	var tags = store.tags('webapp');
+	var results;
+	var tagData = [];
+	var first = true;
+	for(var i = 0; i < tags.length ; i++) {
+		results = store.tagged('webapp', tags[i].name, {
+			start: Number(request.getParameter('start')) || 0,
+			count: Number(request.getParameter('count')) || 50000,
+			sort: 'ASC'
+		});
+
+		tagData.push({
+			"tagName":tags[i].name,
+			"assets": results,
+			"first": first
+		});
+		tags[i].first = first;
+		first = false;
+	}
+
+	results = store.tagged('webapp', '', {
+		start: Number(request.getParameter('start')) || 0,
+		count: Number(request.getParameter('count')) || 50000,
+		sort: 'ASC'
+	});
+
+	tagData.push({
+		"tagName":'All',
+		"assets": results
+	});
+
+	caramel.render({
+		title: 'Store | Web Application Groups',
+		user: user,
+		sso: sso,
+		header: site.header(tenantId, {
+			sso: sso,
+			user: user
+		}),
+		data:tagData,
+		tagNames : tags
+	});
+}, request, response, session);
+
+function getServiceDir(serviceName) {
+	return '../services/' + serviceName;
+}
+
+function getServiceDir(serviceName) {
+	return '../services/' + serviceName;
+}
+%>

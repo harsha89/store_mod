@@ -15,7 +15,7 @@ require('/modules/store.js').exec(function (ctx) {
                 if (!user) {
                     return server.anonRegistry();
                 }
-                return new carbon.registry.Registry(server.server(), {
+                return new carbon.registry.Registry(server, {
                     username: user.username,
                     tenantId: user.tenantId
                 });
@@ -39,7 +39,7 @@ require('/modules/store.js').exec(function (ctx) {
             };
     response.contentType = 'application/json';
     if (matcher.match('/{context}/apis/{version}/assets/{type}/') ||
-            matcher.match('/{context}/apis/{version}/assets/{type}')) {
+        matcher.match('/{context}/apis/{version}/assets/{type}')) {
         type = matcher.elements().type;
         man = manager(type);
         options = request.getContent();
@@ -72,7 +72,7 @@ require('/modules/store.js').exec(function (ctx) {
     }
 
     if (matcher.match('/{context}/apis/{version}/assets/{type}/{provider}/{+name}/{+ver}') ||
-            matcher.match('/{context}/apis/{version}/assets/{type}/{provider}/{+name}/{+ver}/')) {
+        matcher.match('/{context}/apis/{version}/assets/{type}/{provider}/{+name}/{+ver}/')) {
         elems = matcher.elements();
         type = elems.type;
         man = manager(type);
@@ -114,7 +114,7 @@ require('/modules/store.js').exec(function (ctx) {
     }
 
     if (matcher.match('/{context}/apis/{version}/assets/{type}/{provider}/{+name}') ||
-            matcher.match('/{context}/apis/{version}/assets/{type}/{provider}/{+name}/')) {
+        matcher.match('/{context}/apis/{version}/assets/{type}/{provider}/{+name}/')) {
         elems = matcher.elements();
         type = elems.type;
         man = manager(type);
@@ -132,7 +132,7 @@ require('/modules/store.js').exec(function (ctx) {
     }
 
     if (matcher.match('/{context}/apis/{version}/assets/{type}/{provider}') ||
-            matcher.match('/{context}/apis/{version}/assets/{type}/{provider}/')) {
+        matcher.match('/{context}/apis/{version}/assets/{type}/{provider}/')) {
         elems = matcher.elements();
         type = elems.type;
         man = manager(type);

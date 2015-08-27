@@ -36,6 +36,11 @@ var assetLinks = function (user) {
                 title:'Documentations',
                 url:'doc',
                 path:'doc.jag'
+            },
+            {
+                title:'Webapp Groups',
+                url:'groups',
+                path:'groups.jag'
             }
         ]
     }

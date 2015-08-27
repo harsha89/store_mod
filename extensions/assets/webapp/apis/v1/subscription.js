@@ -8,13 +8,13 @@ var resource = (function () {
     SubscriptionService = require('/extensions/assets/webapp/services/subscription.js').serviceModule;
     subsApi = new SubscriptionService.SubscriptionService();
 
-	subsApi.init(jagg, session);
+    subsApi.init(jagg, session);
 
-    AuthService = require('/extensions/assets/webapp/services/authentication.js').serviceModule;
-    authenticator = new AuthService.Authenticator();
+    var AuthService = require('/extensions/assets/webapp/services/authentication.js').serviceModule;
+    var authenticator = new AuthService.Authenticator();
     authenticator.init(jagg, session);
 
-    
+
 
     /*
      Subscribes the given application to an API with the provided details
@@ -37,7 +37,7 @@ var resource = (function () {
         subscription['enterprises'] = '';
 
         if(subscription['subscriptionType'] == 'ENTERPRISE'){
-            subscription['enterprises'] = parameters.enterprises;                     
+            subscription['enterprises'] = parameters.enterprises;
         }
 
         subscription['user'] = authenticator.getLoggedInUser().username;
@@ -61,17 +61,15 @@ var resource = (function () {
         var uriMatcher = new URIMatcher(request.getRequestURI());
         var URI = '/{context}/resources/{asset}/{version}/{resource}/{appName}';
         var isMatch = uriMatcher.match(URI);
-        var apis={};
 
         if (isMatch) {
-
-            var appName = uriMatcher.elements().appName;
-            var userName = authenticator.getLoggedInUser().username;
-
-            //Get the api name
-            apis = subsApi.getSubsForApp({appName:appName, user:userName });
+            var userName = uriMatcher.elements().username;
+            var applications = subsApi.getAppsWithSubs({user: userName});
+            return (applications && applications.length) ? applications[0].subscriptions : null;
+        } else {
+            return null;
         }
-        return apis;
+
     };
 
 
